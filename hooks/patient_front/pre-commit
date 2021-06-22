@@ -1,0 +1,9 @@
+#!/bin/bash
+cmd.exe /c "lein with-profile prod cljsbuild once"
+if [ $? -eq 0 ]; then
+    "Successfully finished build"
+    exit 0
+else
+    echo "Fix build"
+    exit 1
+fi
