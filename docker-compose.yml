@@ -1,0 +1,30 @@
+version: "2.4"
+services:
+  patient-front:
+    build: ../patient_front
+    ports:
+      - 4001:4001
+
+  patient-back:
+    build: ../patient_back
+    ports:
+      - 8080:8080
+    depends_on:
+      db-postgres-patient:
+        condition: service_healthy
+    environment:
+      DB-HOST: db-postgres-patient
+
+  db-postgres-patient:
+    image: postgres:12.5-alpine
+    volumes:
+      - ./mounts/db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: patient
+      POSTGRES_PASSWORD: patient
+      POSTGRES_DB: patient
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U patient"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
